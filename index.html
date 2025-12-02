@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flappy Bird Modern</title>
+    <style>
+        body {
+            margin: 0;
+            background: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            user-select: none;
+        }
+        canvas {
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+        #startBtn, #restartBtn {
+            position: absolute;
+            top: 20px;
+            padding: 10px 20px;
+            background: #ffca28;
+            border: none;
+            color: black;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        #restartBtn {
+            top: auto;
+            bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="576" height="1024"></canvas>
+
+<button id="startBtn">START</button>
+<button id="restartBtn">RESTART</button>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Load images
+    const background = new Image();
+    background.src = "background.png";
+
+    const ground = new Image();
+    ground.src = "ground.png";
+
+    const birdImg = new Image();
+    birdImg.src = "flappy2.png";
+
+    const pipeTopImg = new Image();
+    pipeTopImg.src = "pipeTop.png";
+
+    const pipeBottomImg = new Image();
+    pipeBottomImg.src = "pipeBottom.png";
+
+    // Sounds
+    const flapSound = new Audio("more-moro-ava-dyo_irtWkd9a.mp3");
+    const hitSound = new Audio("maykanglinav.mp3");
+
+    let birdX = 40;
+    let birdY = 150;
+    let birdVelocity = 0;
+    const gravity = 0.4;
+    const jump = -6;
+
+    let pipes = [];
+    let gameStarted = false;
+    let gameOver = false;
+    let score = 0;
+    let highScore = parseInt(localStorage.getItem("fb_highscore")) || 0;
+
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    startBtn.style.display = "block";
+
+    function startGame() {
+        gameStarted = true;
+        startBtn.style.display = "none";
+
+        pipes = [];
+        score = 0;
+        birdY = 150;
+        birdVelocity = 0;
+        gameOver = false;
+
+        generatePipe();
+        loop();
+    }
+
+    function restartGame() {
+        restartBtn.style.display = "none";
+        startGame();
+    }
+
+    function flap() {
+        if (!gameStarted || gameOver) return;
+        birdVelocity = jump;
+        flapSound.play();
+    }
+
+    canvas.addEventListener("click", flap);
+    document.addEventListener("keydown", flap);
+    canvas.addEventListener("touchstart", flap);
+
+    startBtn.onclick = startGame;
+    restartBtn.onclick = restartGame;
+
+    function generatePipe() {
+        let gap = 130;
+        let topHeight = Math.floor(Math.random() * 200) + 50;
+        pipes.push({
+            x: canvas.width,
+            topHeight: topHeight,
+            bottomY: topHeight + gap
+        });
+    }
+
+    function drawPipes() {
+        pipes.forEach(pipe => {
+            ctx.drawImage(pipeTopImg, pipe.x, pipe.topHeight - 400);
+            ctx.drawImage(pipeBottomImg, pipe.x, pipe.bottomY);
+        });
+    }
+
+    function movePipes() {
+        pipes.forEach(pipe => pipe.x -= 2);
+
+        if (pipes[pipes.length - 1].x < 150) {
+            generatePipe();
+        }
+
+        if (pipes[0].x < -80) {
+            pipes.shift();
+            score++;
+            highScore = Math.max(highScore, score);
+            localStorage.setItem("fb_highscore", highScore);
+        }
+    }
+
+    function checkCollision() {
+        if (birdY + 24 > canvas.height - 112) return true; // ground
+
+        for (let pipe of pipes) {
+            if (birdX + 34 > pipe.x && birdX < pipe.x + 80) {
+                if (birdY < pipe.topHeight || birdY + 24 > pipe.bottomY) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function loop() {
+        if (!gameStarted) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+        // Bird movement
+        birdVelocity += gravity;
+        birdY += birdVelocity;
+
+        ctx.drawImage(birdImg, birdX, birdY, 40, 30);
+
+        movePipes();
+        drawPipes();
+
+        ctx.drawImage(ground, 0, canvas.height - 112, canvas.width, 112);
+
+        // Score
+        ctx.fillStyle = "white";
+        ctx.font = "24px Arial";
+        ctx.fillText("Score: " + score, 10, 30);
+        ctx.fillText("Best: " + highScore, 10, 60);
+
+        if (checkCollision()) {
+            hitSound.play();
+            gameOver = true;
+            restartBtn.style.display = "block";
+            return;
+        }
+
+        requestAnimationFrame(loop);
+    }
+</script>
+
+</body>
+</html>
