@@ -17,9 +17,10 @@
         * {
             touch-action: manipulation;
         }
-        body {
-          -webkit-user-select: none;
-          user-select: none;
+        body, canvas, button {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         canvas {
             border: 2px solid #fff;
@@ -50,6 +51,18 @@
 
 <button id="startBtn">START</button>
 <button id="restartBtn">RESTART</button>
+
+    <script>
+let lastTap = 0;
+document.addEventListener("touchend", function (e) {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 300 && tapLength > 0) {
+        e.preventDefault();  // blocks double-tap zoom
+    }
+    lastTap = currentTime;
+});
+</script>
 
 <script>
     const canvas = document.getElementById("gameCanvas");
@@ -206,5 +219,6 @@
 
 </body>
 </html>
+
 
 
