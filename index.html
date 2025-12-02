@@ -47,7 +47,7 @@
 </head>
 <body>
 
-<canvas id="gameCanvas" width="576" height="1024"></canvas>
+<canvas id="gameCanvas" width="288" height="512"></canvas>
 
 <button id="startBtn">START</button>
 <button id="restartBtn">RESTART</button>
@@ -187,7 +187,7 @@ document.addEventListener("touchend", function (e) {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(background, 0, 0);
 
         // Bird movement
         birdVelocity += gravity;
@@ -219,6 +219,7 @@ document.addEventListener("touchend", function (e) {
 
 </body>
 </html>
+
 
 
 
