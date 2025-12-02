@@ -17,11 +17,11 @@
         * {
             touch-action: manipulation;
         }
-        body, canvas, button {
-            touch-action: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
+        body, canvas {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+}
         canvas {
             border: 2px solid #fff;
             border-radius: 10px;
@@ -58,7 +58,7 @@ document.addEventListener("touchend", function (e) {
     const currentTime = new Date().getTime();
     const tapLength = currentTime - lastTap;
     if (tapLength < 300 && tapLength > 0) {
-        e.preventDefault();  // blocks double-tap zoom
+        e.preventDefault();
     }
     lastTap = currentTime;
 });
@@ -219,6 +219,7 @@ document.addEventListener("touchend", function (e) {
 
 </body>
 </html>
+
 
 
 
