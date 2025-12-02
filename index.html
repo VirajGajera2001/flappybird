@@ -25,6 +25,10 @@
         canvas {
             border: 2px solid #fff;
             border-radius: 10px;
+            width: 100vw;
+    height: 100vh;
+    display: block;
+    touch-action: manipulation;
         }
         #startBtn, #restartBtn {
             position: absolute;
@@ -47,7 +51,7 @@
 </head>
 <body>
 
-<canvas id="gameCanvas" width="288" height="512"></canvas>
+<canvas id="gameCanvas" width="576" height="1024"></canvas>
 
 <button id="startBtn">START</button>
 <button id="restartBtn">RESTART</button>
@@ -66,6 +70,8 @@ document.addEventListener("touchend", function (e) {
 
 <script>
     const canvas = document.getElementById("gameCanvas");
+    canvas.width = 576;
+    canvas.height = 1024;
     const ctx = canvas.getContext("2d");
 
     // Load images
@@ -219,6 +225,7 @@ document.addEventListener("touchend", function (e) {
 
 </body>
 </html>
+
 
 
 
